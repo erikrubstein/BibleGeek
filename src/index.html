@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Passage Fetcher</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <div id="selection-page" class="page active">
+      <div id="selection-container">
+        <h1>Enter a Bible Passage</h1>
+        <label for="passage-input"></label>
+        <input type="text" id="passage-input" placeholder="e.g., 2 Timothy 1:1-7">
+        <button id="passage-input-button">Start</button>
+      </div>
+    </div>
+
+    <div id="test-page" class="page">
+      <div id="test-container">
+        <div>
+          <h1 id="passage-title">Test</h1>
+        </div>
+        <div id="passage-content">
+          <span id="token-container"></span><span id="caret"></span>
+        </div>
+      </div>
+    </div>
+
+    <script src="secrets.js"></script>
+    <script src="script.js"></script>
+    <script src="scripts/pages.js"></script>
+    <script src="scripts/tokens.js"></script>
+    <script src="scripts/inputs.js"></script>
+  </body>
+</html>

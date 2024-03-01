@@ -1,0 +1,225 @@
+:root {
+    --font: 'JetBrains Mono', sans-serif;
+
+    --main-text-color: #bdbdbd;
+    --secondary-text-color: #797979;
+    --main-content-color: #3a3a3a;
+    --secondary-content-color: #424242;
+    --main-background-color: #252525;
+    --secondary-background-color: #1a1a1a;
+    --main-accent-color: #ffc500;
+    --secondary-accent-color: #ffcd50;
+    --main-error-color: #d34747;
+}
+
+/* GENERAL */
+
+html {
+    scrollbar-gutter: stable;
+}
+
+body {
+    margin: 0;
+    padding: 0 0 0 15px;
+    font-family: var(--font);
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
+}
+
+::selection {
+    background: var(--main-accent-color);
+    color: var(--main-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0, 0, 0.5);
+    border-radius: 10px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0, 0, 0.7);
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+}
+
+::-webkit-scrollbar-corner {
+    display: none;
+}
+
+/* PAGE */
+
+.page {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+
+    left: 200px;
+    right: 200px;
+    width: auto !important;
+
+    min-height: 100%;
+    height: min-content;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.page.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* SPECIFIC PAGES */
+
+#selection-page {
+    align-items: center;
+    text-align: center;
+}
+
+#selection-page h1 {
+    margin: 10px 0;
+}
+
+#selection-page #passage-input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+
+    background-color: var(--main-content-color);
+    color: var(--main-text-color);
+    font-family: var(--font);
+    font-size: 1.2rem;
+
+    outline: 3px solid var(--main-background-color);
+    transition: outline 0.3s, background-color 0.3s;
+}
+
+#selection-page #passage-input:focus {
+    background-color: var(--secondary-content-color);
+}
+
+#selection-page #passage-input::placeholder {
+    color: var(--secondary-text-color);
+    font-family: var(--font);
+}
+
+#selection-page #passage-input-button {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+
+    background-color: var(--main-accent-color);
+    color: var(--main-background-color);
+    cursor: pointer;
+    font-family: var(--font);
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: background-color 0.3s;
+}
+
+#selection-page #passage-input-button:hover {
+    background-color: var(--secondary-accent-color);
+}
+
+#test-page {
+    width: 100%;
+    max-width: 1000px;
+}
+
+#test-container {
+    width: 100%;
+}
+
+#passage-content {
+    width: 100%;
+    text-align: left;
+    line-height: 2;
+    word-wrap: break-word;
+}
+
+#token-container span {
+    white-space: pre-wrap;
+}
+
+@keyframes passageContentTokensFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#token-container .fade-in {
+    animation-name: passageContentTokensFadeIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
+}
+
+#token-container .header {
+    display: inline-block;
+    color: var(--main-accent-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#token-container .chapter {
+    color: var(--main-accent-color);
+    font-size: 3rem;
+    line-height: 1.3;
+    font-weight: bold;
+    float: left;
+    margin-right: 10px;
+}
+
+#token-container .verse {
+    color: var(--main-accent-color);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+#token-container .character {
+    color: var(--main-text-color);
+}
+
+#token-container .invalid {
+    color: var(--main-error-color);
+    border-bottom: 2px solid var(--main-error-color);
+}
+
+#ghost-content {
+    color: var(--secondary-text-color);
+    max-width: 100%;
+}
+
+@keyframes caretBlink {
+    0% {
+        border-right-color: var(--secondary-accent-color);
+    }
+    50% {
+        border-right-color: var(--main-background-color);
+    }
+    100% {
+        border-right-color: var(--secondary-accent-color);
+    }
+}
+
+#caret {
+    display: inline-block;
+    height: 1.4rem;
+    border-right: 0.2rem solid var(--main-accent-color);
+    margin: -0.2rem -0.2rem -0.2rem 0;
+    animation: caretBlink 1s infinite;
+}
