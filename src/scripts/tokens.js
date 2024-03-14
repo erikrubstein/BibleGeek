@@ -73,6 +73,7 @@ function parseTokens(text) {
                     process('\'');
                     continue;
                 case '“':
+                case '”':
                     process('"');
                     continue;
                 default:
@@ -144,18 +145,22 @@ function parseTokens(text) {
     return tokens;
 }
 
-// token tracker class
-let mistakes = 0;
-
 class TokenTracker {
 
-    constructor(tokenContainerElement, tokens) {
+    constructor(tokenContainerElement, tokens, showGhost) {
         this.tokenContainerElement = tokenContainerElement;
         this.tokens = tokens;
         this.elementWrappers = [];
         this.elementTokenLengths = [];
+        this.ghostElementWrappers = [];
+        this.ghostElementTokenLengths = [];
         this.index = 0;
         this.invalidIndex = 0;
+
+        this.mistakes = 0;
+
+        if (showGhost) {
+        }
     }
 
     fetchElement(type, fadeIn) {
@@ -163,8 +168,8 @@ class TokenTracker {
         if (length === 0 || this.elementWrappers[length - 1][1] !== type) {
 
             if (type === 'invalid') {
-                mistakes++;
-                console.log('Mistakes: ' + mistakes);
+                this.mistakes++;
+                console.log('Mistakes: ' + this.mistakes);
             }
 
             const element = document.createElement('span');
@@ -177,6 +182,8 @@ class TokenTracker {
         }
         return this.elementWrappers[length - 1][0];
     }
+
+    fetchGhostElement
 
     append(fadeIn, token) {
         const element = this.fetchElement(token.type, fadeIn);
@@ -205,6 +212,15 @@ class TokenTracker {
             this.invalidIndex--;
         else
             this.index--;
+    }
+
+    removeAll() {
+        for (let i = 0; i < this.elementWrappers.length; i++)
+            this.elementWrappers[i][0].remove();
+        this.elementWrappers = [];
+        this.elementTokenLengths = [];
+        this.index = 0;
+        this.invalidIndex = 0;
     }
 
     hasNextValidToken() {

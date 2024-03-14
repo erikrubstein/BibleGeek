@@ -115,32 +115,79 @@ class Request {
     }
 }
 
-// elements
-
-const passageInputElement = document.getElementById('passage-input');
-const passageInputButtonElement = document.getElementById('passage-input-button');
-const passageTitle = document.getElementById('passage-title');
-const caret = document.getElementById('caret');
-
-// settings
-const autoFillHeaders = true;
-const autoFillChapters = true;
-const autoFillVerses = true;
-const autoFillIndentation = true;
-const autoFillLineBreaks = true;
-const autoFillPunctuation = true;
-const firstLetterOnly = false;
-const ignoreCase = true;
-
-let tokenTracker;
-
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// elements
+const passageInputElement = document.getElementById('passage-input');
+const passageInputButtonElement = document.getElementById('passage-input-button');
+const passageTitleElement = document.getElementById('passage-title');
+
+const testNavbarButtonElement = document.getElementById('test-navbar-button');
+const settingsNavbarButtonElement = document.getElementById('settings-navbar-button');
+const userNavbarButtonElement = document.getElementById('user-navbar-button');
+
+// state
+let currentTokenTracker;
+let currentTokenInputHandler;
+let currentPassage;
+
+// navbar listeners
+testNavbarButtonElement.addEventListener('click', async () => {
+    if (currentTokenTracker)
+        await switchPage(testPageElement, true);
+    else {
+        await switchPage(selectionPageElement);
+        passageInputElement.focus();
+    }
+});
+
+settingsNavbarButtonElement.addEventListener('click', async () => {
+    await switchPage(settingsPageElement);
+});
+
+userNavbarButtonElement.addEventListener('click', async () => {
+    await switchPage(userPageElement);
+});
+
+// passage selection listeners
 passageInputButtonElement.addEventListener('click', async () => {
     await inputPassage(passageInputElement.value);
 });
+
+passageInputElement.addEventListener('keydown', async event => {
+    if (event.key === 'Enter')
+        await inputPassage(passageInputElement.value);
+});
+
+passageTitleElement.addEventListener('click', async () => {
+    await switchPage(selectionPageElement);
+    passageInputElement.focus();
+});
+
+// input passage
+const keyListener = event => {
+    if (event.metaKey || event.ctrlKey)
+        return;
+
+    const result = currentTokenInputHandler.handle(event.key, false);
+    if (result) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.scrollTo({
+            top: testPageElement.scrollHeight,
+        });
+    }
+}
+
+function enableKeyListener() {
+    document.addEventListener('keydown', keyListener);
+}
+
+function disableKeyListener() {
+    document.removeEventListener('keydown', keyListener)
+}
 
 async function inputPassage(passage) {
 
@@ -152,6 +199,17 @@ async function inputPassage(passage) {
 
     if (!passage)
         return playError();
+
+    if (currentPassage === passage) {
+        await switchPage(testPageElement, true);
+        return;
+    }
+
+    currentPassage = passage;
+
+    // remove current token tracker
+    if (currentTokenTracker)
+        currentTokenTracker.removeAll();
 
     const request = new Request(passage)
         .setIncludeFootnotes(false)
@@ -174,38 +232,14 @@ async function inputPassage(passage) {
         return playError();
 
     const tokens = parseTokens(data.passages[0]);
-    tokenTracker = new TokenTracker(tokenContainerElement, tokens);
+    currentTokenTracker = new TokenTracker(tokenContainerElement, tokens, true);
 
-    passageTitle.innerText = data.canonical;
+    passageTitleElement.innerText = data.canonical;
 
-    await switchPage(testPageElement);
-    const tokenInputHandler = new TokenInputHandler(tokenTracker, {
-        autoFillHeaders: false,
-        autoFillChapters: false,
-        autoFillVerses: false,
-        autoFillPunctuation: false,
-        autoFillLineBreaks: false,
-        autoFillSpaces: false,
-        autoFillIndentation: true,
-        autoFillWords: true,
-        ignoreCase: true,
-    });
-    tokenInputHandler.autofill(new Token(null, null));
-    document.addEventListener('keydown', event => {
-        if (event.metaKey || event.ctrlKey)
-            return;
-
-        const result = tokenInputHandler.handle(event.key, false);
-        if (result) {
-            console.log(event.key);
-            event.preventDefault();
-            event.stopPropagation();
-            window.scrollTo({
-                top: testPageElement.scrollHeight,
-            });
-        }
-    });
+    await switchPage(testPageElement, true);
+    currentTokenInputHandler = new TokenInputHandler(currentTokenTracker, tokenInputHandlerSettings);
+    currentTokenInputHandler.autofill(new Token(null, null));
 }
 
 // testing
-inputPassage('2 Timothy 1');
+// inputPassage('2 Timothy 2');
