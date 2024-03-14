@@ -120,6 +120,11 @@ body {
     fill: var(--main-text-color);
 }
 
+.navbar-button:active {
+    transform: scale(0.95);
+
+}
+
 /* PAGE */
 
 #page-container {
